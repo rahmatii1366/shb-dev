@@ -44,18 +44,18 @@ public class ShbRouteService {
                 shbRouterConfig);
     }
 
-    @GET
-    @ShbRole
-    @Path("/src/{path:.*}")
-    @Produces(MediaType.TEXT_HTML)
-    public Response getSrc(
-            @PathParam("path") String path,
-            @Context HttpHeaders httpHeaders,
-            @Context UriInfo info) {
-        ShbAsset resolve = assetResolver.resolve(
-                "src/".concat(path));
-        return Response.ok(resolve.getBytes()).build();
-    }
+//    @GET
+//    @ShbRole
+//    @Path("/asset/{path:.*}")
+//    @Produces(MediaType.TEXT_HTML)
+//    public Response getSrc(
+//            @PathParam("path") String path,
+//            @Context HttpHeaders httpHeaders,
+//            @Context UriInfo info) {
+//        ShbAsset resolve = assetResolver.resolve(
+//                "asset/".concat(path));
+//        return Response.ok(resolve.getBytes()).build();
+//    }
 
     @GET
     @ShbRole
@@ -66,7 +66,7 @@ public class ShbRouteService {
             @Context HttpHeaders httpHeaders,
             @Context UriInfo info) {
         ShbAsset resolve = assetResolver.resolve(
-                "src/".concat(path));
+                "asset/".concat(path));
         return Response.ok(resolve.getBytes()).build();
     }
 
@@ -94,7 +94,7 @@ public class ShbRouteService {
         ShbAsset asset = null;
         if(route == null || route.isEmpty()) {
             asset = assetResolver
-                    .resolve("src/index.html");
+                    .resolve("asset/index.html");
             return Response.ok(asset.getBytes())
                     .header("Content-Type", "text/html")
                     .build();

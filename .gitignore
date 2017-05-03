@@ -10,3 +10,4 @@ shb-client-sample/asset/app/**/*.js
 shb-client-sample/asset/app/**/*.js.map
 shb-client-sample/asset/*.js
 shb-client-sample/asset/*.js.map
+**/*.log
