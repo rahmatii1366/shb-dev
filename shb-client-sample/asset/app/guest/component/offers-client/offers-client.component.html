@@ -1,0 +1,35 @@
+<h2>My Offers</h2>
+<div class="row">
+    <div *ngFor="let offer of offers" [class.selected]="offer === selectedOffer"
+         (click)="onSelect(offer)" class="large-3 medium-6 small-12 columns">
+        <img src="/images/test/noimage.jpg" />
+        <span class="badge">{{offer.id}}</span>
+        <span>{{offer.name}}</span>
+        <button class="delete"
+                (click)="delete(offer); $event.stopPropagation()">x</button>
+    </div>
+</div>
+
+
+<!--<ul class="offers">-->
+    <!--<li *ngFor="let offer of offers"-->
+        <!--[class.selected]="offer === selectedOffer"-->
+        <!--(click)="onSelect(offer)">-->
+        <!--<span class="badge">{{offer.id}}</span>-->
+        <!--<span>{{offer.name}}</span>-->
+        <!--<button class="delete"-->
+                <!--(click)="delete(offer); $event.stopPropagation()">x</button>-->
+    <!--</li>-->
+<!--</ul>-->
+<!--<div *ngIf="selectedOffer">-->
+    <!--<h2>-->
+        <!--{{selectedOffer.name | uppercase}} is my hero-->
+    <!--</h2>-->
+    <!--<button (click)="gotoDetail()">View Details</button>-->
+<!--</div>-->
+<!--<div>-->
+    <!--<label>Offer name:</label> <input #offerName />-->
+    <!--<button (click)="add(offerName.value); offerName.value=''">-->
+        <!--Add-->
+    <!--</button>-->
+<!--</div>-->

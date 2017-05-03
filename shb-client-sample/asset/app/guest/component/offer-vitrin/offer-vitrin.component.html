@@ -1,0 +1,10 @@
+<h2>Offers</h2>
+<div class="row">
+    <div *ngFor="let offer of offers" [class.selected]="offer === selectedOffer"
+         (click)="onSelect(offer)" class="large-3 medium-6 small-12 columns end">
+        <img class="thumbnail" [src]="'/images/' + offer.imageName" />
+        <h5>{{offer.title}}</h5>
+        <p>{{offer.id}}</p>
+        <a href="#" class="button expanded">Buy</a>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+{
+  "/": {
+    "GET": {
+      "handler": "com.shb.dev.server.rest.FirstRest.getHello",
+      "path-params": [],
+      "query-params": []
+    },
+    "POST": {
+      "handler": "com.shb.dev.server.rest.FirstRest.getHello",
+      "path-params": [],
+      "query-params": []
+    }
+  },
+  "/hello-world/:name": {
+    "GET": {
+      "handler": "com.shb.dev.server.rest.FirstRest.getHello",
+      "path-params": [],
+      "query-params": []
+    }
+  },
+  "/hello-world/second/:name": {
+    "GET": {
+      "handler": "com.shb.dev.server.rest.FirstRest.getHello",
+      "path-params": [],
+      "query-params": []
+    }
+  },
+  "/hello-world/:name/:family": {
+    "GET": {
+      "handler": "com.shb.dev.server.rest.FirstRest.getHello",
+      "path-params": [],
+      "query-params": []
+    }
+  }
+}

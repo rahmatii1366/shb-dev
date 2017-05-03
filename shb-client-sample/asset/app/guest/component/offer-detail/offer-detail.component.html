@@ -1,0 +1,10 @@
+<div *ngIf="offer">
+    <h2>{{offer.name}} details!</h2>
+    <div><label>id: </label>{{offer.id}}</div>
+    <div>
+        <label>name: </label>
+        <input [(ngModel)]="offer.name" placeholder="name"/>
+    </div>
+</div>
+<button (click)="goBack()">Back</button>
+<button (click)="save()">Save</button>
