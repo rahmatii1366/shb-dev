@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import javax.ws.rs.core.UriInfo;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -23,6 +24,13 @@ public class ShbRouteResolver {
 
     ShbRouteResolver(ShbRouterConfig routerConfig) {
         this.routerConfig = routerConfig;
+        Set<String> routes = routerConfig.getRoutes();
+        for(String route : routes) {
+            int colon = route.indexOf(":");
+            String url = route.substring(0,
+                    route.indexOf(":") - 1);
+
+        }
     }
 
     public void resolveRoute(

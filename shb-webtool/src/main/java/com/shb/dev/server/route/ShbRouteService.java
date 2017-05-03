@@ -44,19 +44,6 @@ public class ShbRouteService {
                 shbRouterConfig);
     }
 
-//    @GET
-//    @ShbRole
-//    @Path("/asset/{path:.*}")
-//    @Produces(MediaType.TEXT_HTML)
-//    public Response getSrc(
-//            @PathParam("path") String path,
-//            @Context HttpHeaders httpHeaders,
-//            @Context UriInfo info) {
-//        ShbAsset resolve = assetResolver.resolve(
-//                "asset/".concat(path));
-//        return Response.ok(resolve.getBytes()).build();
-//    }
-
     @GET
     @ShbRole
     @Path("/asset/{path:.*}")
