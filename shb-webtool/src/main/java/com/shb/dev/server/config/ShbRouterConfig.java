@@ -26,6 +26,18 @@ public class ShbRouterConfig
         return configMap.keySet();
     }
 
+    public Set<String> getHttpMethods(
+            String route) {
+        if(route == null || route.isEmpty())
+            route = new String("/");
+        if(getShbConfig(route) == null)
+            return null;
+        Map<String, Object> configMap = getMap(route);
+        if(configMap != null)
+            return configMap.keySet();
+        return null;
+    }
+
     public ShbRouteConfig getRouteConfig(
             String route, String method) {
         if(route == null || route.isEmpty())
@@ -56,8 +68,8 @@ public class ShbRouterConfig
         public static final String QUERY_PARAMS_CONFIG
                 = "query-params";
 
-        public int getHandler() {
-            return Integer.parseInt(getString(HANDLER_CONFIG));
+        public String getHandler() {
+            return getString(HANDLER_CONFIG);
         }
 
         public List<String> getPathParams() {

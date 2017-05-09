@@ -22,7 +22,7 @@ class ShbNettyHttpServer
         this.serverConfig = serverConfig;
         this.routerConfig = routerConfig;
         this.sessionConfig = new ShbSessionConfig();
-        sessionConfig.reconfigure(
+        this.sessionConfig.reconfigure(
                 serverConfig.getSessionConfig());
     }
 

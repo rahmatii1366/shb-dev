@@ -4,6 +4,8 @@ import com.shadbarg.secure.ShbSecureException;
 import com.shadbarg.secure.cache.ShbCacheProvider;
 import com.shadbarg.secure.key.KeyPairAlgorithm;
 import com.shadbarg.secure.key.KeyPairMaker;
+import com.shb.dev.server.config.ShbServerConfig;
+import com.shb.dev.server.config.ShbServerConfig.ShbSessionConfig;
 import com.shb.dev.server.role.ShbRoleType;
 import org.apache.log4j.Logger;
 
@@ -28,6 +30,15 @@ public class ShbSessionManager {
                 ShbCacheProvider.getInstance(
                         key -> createNewSession(),
                         cacheSize, expireSeconds);
+    }
+
+    public static ShbSessionManager createSessionManager(
+            ShbSessionConfig sessionConfig) {
+        return new ShbSessionManager(
+                (Integer) sessionConfig
+                        .getSessionCacheSize(),
+                (Integer) sessionConfig
+                        .getSessionExpireSecond());
     }
 
     public ShbSession retrieveSession(

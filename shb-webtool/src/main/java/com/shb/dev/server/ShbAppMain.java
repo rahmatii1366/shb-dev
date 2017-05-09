@@ -7,27 +7,15 @@ import java.io.InputStream;
 /**
  * @author Mohammad Rahmati, 4/23/2017 12:13 PM
  */
-public class ShbAppMain implements Runnable {
-    private InputStream serverConfigStream = null;
-    private InputStream routerConfigStream = null;
-
-    public ShbAppMain(
+public class ShbAppMain {
+    public static void run(
             InputStream serverConfigStream,
-            InputStream routerConfigStream) {
-        this.serverConfigStream = serverConfigStream;
-        this.routerConfigStream = routerConfigStream;
-    }
-
-    @Override
-    public void run() {
-        try {
-            ShbBaseHttpServer server =
-                    ShbBaseHttpServer.createServer(
-                            serverConfigStream,
-                            routerConfigStream);
-            server.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            InputStream routerConfigStream)
+            throws Exception {
+        ShbBaseHttpServer server =
+                ShbBaseHttpServer.createServer(
+                        serverConfigStream,
+                        routerConfigStream);
+        server.start();
     }
 }

@@ -5,6 +5,7 @@ import com.shb.dev.server.config.ShbRouterConfig;
 import com.shb.dev.server.config.ShbServerConfig;
 import com.shb.dev.server.config.ShbServerConfig.ShbSessionConfig;
 import com.shb.dev.server.filter.response.ShbCORSFilter;
+import com.shb.dev.server.route.ShbRouteClassGenerator;
 import com.shb.dev.server.route.ShbRouteService;
 import com.shb.dev.server.session.ShbRequestAuthFilter;
 import com.shb.dev.server.session.ShbResponseAuthFilter;
@@ -13,7 +14,9 @@ import org.glassfish.jersey.server.ResourceConfig;
 
 import java.io.InputStream;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Mohammad Rahmati, 4/23/2017 11:36 AM
@@ -32,7 +35,8 @@ public abstract class ShbBaseHttpServer {
             InputStream serverConfigStream,
             InputStream routerConfigStream)
             throws Exception {
-        ShbServerConfig shbServerConfig = new ShbServerConfig();
+        ShbServerConfig shbServerConfig =
+                new ShbServerConfig();
         shbServerConfig.reconfigure(ShbConfigReader
                 .createFromJson(serverConfigStream));
         ShbRouterConfig shbRouterConfig =
@@ -42,7 +46,6 @@ public abstract class ShbBaseHttpServer {
         ShbHttpServerType serverType =
                 shbServerConfig.getServerType();
 
-
         if(ShbHttpServerType.NETTY == serverType)
             return new ShbNettyHttpServer(
                     shbServerConfig, shbRouterConfig);
@@ -50,19 +53,13 @@ public abstract class ShbBaseHttpServer {
             throw new Exception("type of http server not founded.");
     }
 
-    protected ShbSessionManager createSessionManager() {
-        sessionManager = new ShbSessionManager(
-                (Integer) sessionConfig.getSessionCacheSize(),
-                (Integer) sessionConfig.getSessionExpireSecond());
-        return sessionManager;
-    }
-
     public void addProperties(
             String key, Object property) {
         httpProperties.put(key, property);
     }
 
-    public void start() {
+    public void start()
+            throws Exception {
 //        ArrayList<String> packages = (ArrayList<String>) serverConfig
 //                .getValue(ShbServerConfig.REST_PACKAGES);
 //        String[] packArray = new String[packages.size()];
@@ -70,12 +67,16 @@ public abstract class ShbBaseHttpServer {
 //        for(String pack : packages)
 //            packArray[temp++] = pack;
 //        resourceConfig.packages(packArray);
-
-        resourceConfig.register(ShbRouteService.class);
+        Set<Class<?>> classes = ShbRouteClassGenerator
+                    .generateRouteClasses(routerConfig);
+        resourceConfig.registerClasses(classes);
+//        resourceConfig.register(ShbRouteService.class);
         resourceConfig.register(ShbRequestAuthFilter.class);
         resourceConfig.register(ShbResponseAuthFilter.class);
         resourceConfig.register(ShbCORSFilter.class);
 
+        sessionManager = ShbSessionManager
+                .createSessionManager(sessionConfig);
 //        ArrayList<String> filters = (ArrayList<String>) serverConfig
 //                .getValue(ShbServerConfig.REST_FILTERS);
 //        for(String filter : filters)
@@ -88,13 +89,9 @@ public abstract class ShbBaseHttpServer {
                 ShbServerConfig.SHB_SERVER_CONFIG,
                 serverConfig);
         httpProperties.put(
-                ShbRouterConfig.SHB_ROUTER_CONFIG,
-                routerConfig);
-        httpProperties.put(
                 ShbSessionManager.SHB_SESSION_MANAGER,
-                createSessionManager());
+                sessionManager);
         resourceConfig.addProperties(httpProperties);
-        createSessionManager();
         startService();
     }
 

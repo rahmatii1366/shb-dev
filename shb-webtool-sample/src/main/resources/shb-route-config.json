@@ -1,34 +1,34 @@
 {
   "/": {
     "GET": {
-      "handler": "com.shb.dev.server.rest.FirstRest.getHello",
+      "handler": "com.shb.dev.sample.rest.FirstService.getHelloWorld",
       "path-params": [],
-      "query-params": []
+      "query-params": [],
+      "role": "guest"
     },
     "POST": {
-      "handler": "com.shb.dev.server.rest.FirstRest.getHello",
+      "handler": "com.shb.dev.sample.rest.FirstService.getHelloWorld",
       "path-params": [],
-      "query-params": []
+      "query-params": [],
+      "role": "admin"
     }
   },
-  "/hello-world/:name": {
-    "GET": {
-      "handler": "com.shb.dev.server.rest.FirstRest.getHello",
-      "path-params": [],
+  "/hello-world": {
+    "GET#name": {
+      "handler": "com.shb.dev.sample.rest.FirstService.getHelloName",
+      "path-params": ["name"],
       "query-params": []
+    },
+    "GET#name:family": {
+      "handler": "com.shb.dev.sample.rest.FirstService.getHelloNameFamily",
+      "path-params": ["name", "family"],
+      "query-params": ["message"]
     }
   },
-  "/hello-world/second/:name": {
-    "GET": {
-      "handler": "com.shb.dev.server.rest.FirstRest.getHello",
-      "path-params": [],
-      "query-params": []
-    }
-  },
-  "/hello-world/:name/:family": {
-    "GET": {
-      "handler": "com.shb.dev.server.rest.FirstRest.getHello",
-      "path-params": [],
+  "/hello-world/second": {
+    "GET#name": {
+      "handler": "com.shb.dev.sample.rest.FirstService.getHelloName",
+      "path-params": ["name"],
       "query-params": []
     }
   }
