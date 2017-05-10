@@ -22,8 +22,9 @@ import java.lang.reflect.Method;
 /**
  * @author Mohammad Rahmati, 4/12/2017 2:33 PM
  */
-@ShbRole
+@ShbRole(roleType = ShbRoleType.ADMIN)
 @Singleton
+@Deprecated
 public class ShbRequestAuthFilter extends ShbAuthFilter
         implements ContainerRequestFilter {
     final static Logger logger =
@@ -55,12 +56,12 @@ public class ShbRequestAuthFilter extends ShbAuthFilter
                 .get(SessionName);
 
         ShbRoleType sessionRoleType = ShbRoleType.GUEST;
-        if(cookie != null) {
-            ShbSession shbSession = sessionManager
-                    .retrieveSession(cookie.getValue());
-            if(shbSession != null)
-                sessionRoleType = shbSession.getRoleType();
-        }
+//        if(cookie != null) {
+//            ShbSession shbSession = sessionManager
+//                    .retrieveSession(requestContext.getHeaders());
+//            if(shbSession != null)
+//                sessionRoleType = shbSession.getRoleType();
+//        }
 
         ShbRoleType resourceRuleType =
                 getResourceRuleType(requestContext);

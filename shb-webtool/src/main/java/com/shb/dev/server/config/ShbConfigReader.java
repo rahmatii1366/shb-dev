@@ -49,4 +49,16 @@ public class ShbConfigReader {
         }
         return shbConfig;
     }
+
+    public static ShbConfig createFromMap(
+            Map<String, Object> configMap)
+            throws Exception {
+        if(configMap == null)
+            throw new Exception("input map is null");
+
+        ShbConfig shbConfig =
+                new ShbConfig();
+        shbConfig.configMap = configMap;
+        return shbConfig;
+    }
 }

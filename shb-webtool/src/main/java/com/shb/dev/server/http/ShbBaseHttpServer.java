@@ -60,31 +60,14 @@ public abstract class ShbBaseHttpServer {
 
     public void start()
             throws Exception {
-//        ArrayList<String> packages = (ArrayList<String>) serverConfig
-//                .getValue(ShbServerConfig.REST_PACKAGES);
-//        String[] packArray = new String[packages.size()];
-//        int temp = 0;
-//        for(String pack : packages)
-//            packArray[temp++] = pack;
-//        resourceConfig.packages(packArray);
         Set<Class<?>> classes = ShbRouteClassGenerator
                     .generateRouteClasses(routerConfig);
         resourceConfig.registerClasses(classes);
-//        resourceConfig.register(ShbRouteService.class);
-        resourceConfig.register(ShbRequestAuthFilter.class);
-        resourceConfig.register(ShbResponseAuthFilter.class);
         resourceConfig.register(ShbCORSFilter.class);
 
         sessionManager = ShbSessionManager
                 .createSessionManager(sessionConfig);
-//        ArrayList<String> filters = (ArrayList<String>) serverConfig
-//                .getValue(ShbServerConfig.REST_FILTERS);
-//        for(String filter : filters)
-//            try {
-//                resourceConfig.register(Class.forName(filter));
-//            } catch (ClassNotFoundException e) {
-//                e.printStackTrace();
-//            }
+
         httpProperties.put(
                 ShbServerConfig.SHB_SERVER_CONFIG,
                 serverConfig);

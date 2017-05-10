@@ -41,22 +41,22 @@
                             <!--<packageName>com.shb.example</packageName>-->
                         </configuration>
                     </execution>
-                    <!--<execution>-->
-                        <!--<id>generate-wsdl-2</id>-->
-                        <!--<phase>process-classes</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>wsgen</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<sei>com.shb.example.jaxws.CalculatorImpl2</sei>-->
-                            <!--<genWsdl>true</genWsdl>-->
-                            <!--<keep>true</keep>-->
-                            <!--<verbose>true</verbose>-->
-                            <!--<sourceDestDir>${project.build.directory}/generated-sources/wsgen2</sourceDestDir>-->
-                            <!--<resourceDestDir>${project.build.directory}/generated-sources/wsdl2</resourceDestDir>-->
-                            <!--&lt;!&ndash;<packageName>com.shb.example</packageName>&ndash;&gt;-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
+                    <execution>
+                        <id>generate-wsdl-2</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>wsgen</goal>
+                        </goals>
+                        <configuration>
+                            <sei>com.shb.example.jaxws.CalculatorImpl2</sei>
+                            <genWsdl>true</genWsdl>
+                            <keep>true</keep>
+                            <verbose>true</verbose>
+                            <sourceDestDir>${project.build.directory}/generated-sources/wsgen2</sourceDestDir>
+                            <resourceDestDir>${project.build.directory}/generated-sources/wsdl2</resourceDestDir>
+                            <!--<packageName>com.shb.example</packageName>-->
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>generate-stubs</id>
                         <phase>process-classes</phase>
@@ -85,34 +85,34 @@
                             <!--<wsdlLocation>http://localhost:9999/ws/calculator</wsdlLocation>-->
                         </configuration>
                     </execution>
-                    <!--<execution>-->
-                        <!--<id>generate-stubs-2</id>-->
-                        <!--<phase>process-classes</phase>-->
-                        <!--&lt;!&ndash;<phase>integration-test</phase>&ndash;&gt;-->
-                        <!--<goals>-->
-                            <!--<goal>wsimport</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<sourceDestDir>${project.build.directory}/generated-sources/wsimport</sourceDestDir>-->
-                            <!--<args>-->
-                                <!--<arg>-clientjar</arg>-->
-                                <!--<arg>${project.build.directory}/${project.artifactId}-${project.version}-client.jar</arg>-->
-                            <!--</args>-->
-                            <!--&lt;!&ndash;<wsdlUrls>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<wsdlUrl>http://localhost:8080/dml-ejb-1.0-SNAPSHOT/CalculatorService/Calculator?wsdl</wsdlUrl>&ndash;&gt;-->
-                            <!--&lt;!&ndash;</wsdlUrls>&ndash;&gt;-->
-                            <!--&lt;!&ndash; Keep generated files &ndash;&gt;-->
-                            <!--<wsdlDirectory>${project.build.directory}/generated-sources/wsdl2</wsdlDirectory>-->
-                            <!--<wsdlFiles>-->
-                                <!--<wsdlFile>-->
-                                    <!--&lt;!&ndash; class name goes here &ndash;&gt;-->
-                                    <!--CalculatorService.wsdl-->
-                                <!--</wsdlFile>-->
-                            <!--</wsdlFiles>-->
-                            <!--&lt;!&ndash; *** you need the next line to set the wsdlLocation in the generated stubs *** &ndash;&gt;-->
-                            <!--&lt;!&ndash;<wsdlLocation>http://localhost:9999/ws/calculator</wsdlLocation>&ndash;&gt;-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
+                    <execution>
+                        <id>generate-stubs-2</id>
+                        <phase>process-classes</phase>
+                        <!--<phase>integration-test</phase>-->
+                        <goals>
+                            <goal>wsimport</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDestDir>${project.build.directory}/generated-sources/wsimport</sourceDestDir>
+                            <args>
+                                <arg>-clientjar</arg>
+                                <arg>${project.build.directory}/${project.artifactId}-${project.version}-client.jar</arg>
+                            </args>
+                            <!--<wsdlUrls>-->
+                            <!--<wsdlUrl>http://localhost:8080/dml-ejb-1.0-SNAPSHOT/CalculatorService/Calculator?wsdl</wsdlUrl>-->
+                            <!--</wsdlUrls>-->
+                            <!-- Keep generated files -->
+                            <wsdlDirectory>${project.build.directory}/generated-sources/wsdl2</wsdlDirectory>
+                            <wsdlFiles>
+                                <wsdlFile>
+                                    <!-- class name goes here -->
+                                    CalculatorService2.wsdl
+                                </wsdlFile>
+                            </wsdlFiles>
+                            <!-- *** you need the next line to set the wsdlLocation in the generated stubs *** -->
+                            <!--<wsdlLocation>http://localhost:9999/ws/calculator</wsdlLocation>-->
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>

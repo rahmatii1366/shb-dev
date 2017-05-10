@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
  */
 @ShbRole
 @Singleton
+@Deprecated
 public class ShbResponseAuthFilter
         extends ShbAuthFilter
         implements ContainerResponseFilter {
@@ -58,10 +59,10 @@ public class ShbResponseAuthFilter
         Cookie cookie = requestContext.getCookies()
                 .get(SessionName);
 
-        sessionManager.setSessionCookie(
-                responseContext.getHeaders(),
-                cookie,
-                SessionName,
-                (int)sessionConfig.getSessionExpireSecond());
+//        sessionManager.setSessionCookie(
+//                responseContext.getHeaders(),
+//                cookie,
+//                SessionName,
+//                (int)sessionConfig.getSessionExpireSecond());
     }
 }

@@ -1,7 +1,5 @@
 package com.shb.dev.server.role;
 
-import com.shb.dev.server.role.ShbRoleType;
-
 import javax.ws.rs.NameBinding;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

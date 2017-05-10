@@ -2,10 +2,8 @@ package com.shb.example.jaxws;
 
 import com.shb.example.jaxws.v1.Calculator;
 import com.shb.example.jaxws.v1.CalculatorService;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import com.shb.example.jaxws.v2.CalculatorService2;
+import org.junit.*;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
@@ -43,15 +41,15 @@ public class CalculatorTest {
                         "CalculatorService"));
         Calculator calculator = calculatorService
                 .getPort(Calculator.class);
-//        System.out.println(calculator.sumOf(1, 2));
         Assert.assertEquals(3, calculator.sumOf(1, 2));
     }
 
-//    @Test
-    public void testSum()
+    @Ignore
+    @Test
+    public void testCalculatorService()
             throws MalformedURLException {
         URL url = new URL(
-                "http://localhost:8080/dml-ejb-1.0-SNAPSHOT/CalculatorService/Calculator?wsdl");
+                "http://localhost:8080/jaxws-example-1.0-SNAPSHOT/CalculatorService/calculator?wsdl");
 
         Service calculatorService = CalculatorService
                 .create(url, new QName(
@@ -59,7 +57,22 @@ public class CalculatorTest {
                         "CalculatorService"));
         Calculator calculator = calculatorService
                 .getPort(Calculator.class);
-//        System.out.println(calculator.sumOf(1, 2));
-        Assert.assertEquals(5, calculator.sumOf(3, 2));
+        Assert.assertEquals(3, calculator.sumOf(1, 2));
+    }
+
+    @Ignore
+    @Test
+    public void testCalculatorService2()
+            throws MalformedURLException {
+        URL url = new URL(
+                "http://localhost:8080/jaxws-example-1.0-SNAPSHOT/CalculatorService2/calculator?wsdl");
+
+        Service calculatorService = CalculatorService2
+                .create(url, new QName(
+                        "v2.jaxws.example.shb.com",
+                        "CalculatorService2"));
+        com.shb.example.jaxws.v2.Calculator calculator = calculatorService
+                .getPort(com.shb.example.jaxws.v2.Calculator.class);
+        Assert.assertEquals(-1, calculator.sumOf(1, 2));
     }
 }

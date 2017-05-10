@@ -13,6 +13,7 @@ import java.lang.reflect.Method;
 /**
  * @author Mohammad Rahmati, 5/3/2017 10:15 AM
  */
+@Deprecated
 public class ShbAuthFilter {
     protected ShbRoleType getResourceRuleType(
             ContainerRequestContext requestContext) {

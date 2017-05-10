@@ -48,7 +48,6 @@ public class ShbCacheProvider<K, V> {
         if(key == null)
             throw new Exception(
                     "key is null or empty.");
-        logger.debug("retrieve existing session model.");
         return loadingCache.get(key);
     }
 

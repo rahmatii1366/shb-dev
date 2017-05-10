@@ -1,23 +1,19 @@
 {
   "/": {
     "GET": {
-      "handler": "com.shb.dev.sample.rest.FirstService.getHelloWorld",
+      "handler": "com.shb.dev.sample.rest.AssetService.getRoot",
       "path-params": [],
       "query-params": [],
-      "role": "guest"
-    },
-    "POST": {
-      "handler": "com.shb.dev.sample.rest.FirstService.getHelloWorld",
-      "path-params": [],
-      "query-params": [],
-      "role": "admin"
+      "role": "GUEST",
+      "asset": "true"
     }
   },
   "/hello-world": {
     "GET#name": {
       "handler": "com.shb.dev.sample.rest.FirstService.getHelloName",
       "path-params": ["name"],
-      "query-params": []
+      "query-params": [],
+      "role": "ADMIN"
     },
     "GET#name:family": {
       "handler": "com.shb.dev.sample.rest.FirstService.getHelloNameFamily",

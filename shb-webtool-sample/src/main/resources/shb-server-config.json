@@ -9,7 +9,7 @@
   "session":{
     "session-name": "SHADBARG_SESSION",
     "session-cache-size": "500",
-    "session-expire-second": "900"
+    "session-expire-second": "100"
   },
   "cors": {
     "access-control-allow-origin": [

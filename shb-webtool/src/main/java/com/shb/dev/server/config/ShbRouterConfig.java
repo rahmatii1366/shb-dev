@@ -67,6 +67,10 @@ public class ShbRouterConfig
                 = "path-params";
         public static final String QUERY_PARAMS_CONFIG
                 = "query-params";
+        public static final String ROLE_CONFIG
+                = "role";
+        public static final String ASSET_CONFIG
+                = "asset";
 
         public String getHandler() {
             return getString(HANDLER_CONFIG);
@@ -78,6 +82,19 @@ public class ShbRouterConfig
 
         public List<String> getQueryParams() {
             return getList(QUERY_PARAMS_CONFIG);
+        }
+
+        public String getRole() {
+            return getString(ROLE_CONFIG);
+        }
+
+        public boolean isAsset() {
+            boolean asset = false;
+            if(getString(ASSET_CONFIG) != null &&
+                    getString(ASSET_CONFIG)
+                            .equalsIgnoreCase("TRUE"))
+                asset = true;
+            return asset;
         }
     }
 }

@@ -64,7 +64,8 @@ public class ShbAssetResolver implements Runnable {
         );
     }
 
-    public static ShbAssetResolver getInstance(String publicPath) {
+    public static ShbAssetResolver getInstance(
+            String publicPath) {
         try {
             lock.tryLock(100, TimeUnit.MILLISECONDS);
             Path path = Paths.get(publicPath);

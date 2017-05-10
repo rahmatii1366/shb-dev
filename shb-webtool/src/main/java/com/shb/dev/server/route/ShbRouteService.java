@@ -4,29 +4,46 @@ import com.shb.dev.server.asset.ShbAsset;
 import com.shb.dev.server.asset.ShbAssetResolver;
 import com.shb.dev.server.config.ShbRouterConfig;
 import com.shb.dev.server.config.ShbServerConfig;
+import com.shb.dev.server.response.ShbResponse;
 import com.shb.dev.server.role.ShbRole;
+import com.shb.dev.server.session.ShbSession;
 import com.shb.dev.server.session.ShbSessionManager;
+import org.apache.log4j.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Singleton;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import javax.ws.rs.core.Response.Status;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Mohammad Rahmati, 5/3/2017 7:28 AM
  */
 public class ShbRouteService {
+    protected Logger logger = Logger
+            .getLogger(ShbRouteService.class);
     @Context
     protected Configuration config;
     protected ShbServerConfig shbServerConfig = null;
     protected ShbSessionManager sessionManager = null;
+    protected Map<String, Method> methodMap =
+            new LinkedHashMap<>();
+    protected static ShbResponse UNAUTHORIZED_RESPONSE =
+            new ShbResponse(Status.UNAUTHORIZED, null);
+    protected static ShbResponse INTERNAL_SERVER_ERROR_RESPONSE =
+            new ShbResponse(Status.INTERNAL_SERVER_ERROR, null);
 
     public ShbRouteService() {
     }
 
     @PostConstruct
-    public void init()
+    protected void init()
             throws Exception {
         shbServerConfig = (ShbServerConfig) config
                 .getProperty(ShbServerConfig
@@ -38,103 +55,46 @@ public class ShbRouteService {
                         .SHB_SESSION_MANAGER);
     }
 
-//    @GET
-//    @ShbRole
-//    @Path("/asset/{path:.*}")
-//    @Produces(MediaType.TEXT_HTML)
-//    public Response getAsset(
-//            @PathParam("path") String path,
-//            @Context HttpHeaders httpHeaders,
-//            @Context UriInfo info) {
-//        ShbAsset resolve = null;
-////        resolve = assetResolver.resolve("asset/".concat(path));
-//        return Response.ok(resolve.getBytes()).build();
-//    }
-//
-//    @GET
-//    @ShbRole
-//    @Path("/node_modules/{path:.*}")
-//    @Produces(MediaType.TEXT_HTML)
-//    public Response getNodeModule(
-//            @PathParam("path") String path,
-//            @Context HttpHeaders httpHeaders,
-//            @Context UriInfo info) {
-//        ShbAsset asset = null;
-////        asset = assetResolver.resolve("node_modules/".concat(path));
-//        return Response.ok(asset.getBytes()).build();
-//    }
-//
-//    @GET
-//    @ShbRole
-//    @Path("{route:.*}")
-//    @Produces(MediaType.TEXT_HTML)
-//    public Response getRoute(
-//            @PathParam("route") String route,
-//            @Context HttpHeaders httpHeaders,
-//            @Context UriInfo info) {
-//        ShbAsset asset = null;
-//        if(route == null || route.isEmpty()) {
-////            asset = assetResolver.resolve("asset/index.html");
-//            return Response.ok(asset.getBytes())
-//                    .header("Content-Type", "text/html")
-//                    .build();
-//        }
-////        routeResolver.resolveRoute(route, "GET", info);
-//        return Response.ok("this page is loaded").build();
-//    }
-//
-//    @POST
-//    @ShbRole
-//    @Path("{route:.*}")
-//    @Produces(MediaType.TEXT_HTML)
-//    public Response postRoute(
-//            @PathParam("route") String route,
-//            @Context HttpHeaders httpHeaders,
-//            @Context UriInfo info) {
-//        return Response.ok("this page is loaded").build();
-//    }
-//
-//    @PUT
-//    @ShbRole
-//    @Path("{route:.*}")
-//    @Produces(MediaType.TEXT_HTML)
-//    public Response putRoute(
-//            @PathParam("route") String route,
-//            @Context HttpHeaders httpHeaders,
-//            @Context UriInfo info) {
-//        return Response.ok("this page is loaded").build();
-//    }
-//
-//    @DELETE
-//    @ShbRole
-//    @Path("{route:.*}")
-//    @Produces(MediaType.TEXT_HTML)
-//    public Response deleteRoute(
-//            @PathParam("route") String route,
-//            @Context HttpHeaders httpHeaders,
-//            @Context UriInfo info) {
-//        return Response.ok("this page is loaded").build();
-//    }
-//
-//    @OPTIONS
-//    @ShbRole
-//    @Path("{route:.*}")
-//    @Produces(MediaType.TEXT_HTML)
-//    public Response optionsRoute(
-//            @PathParam("route") String route,
-//            @Context HttpHeaders httpHeaders,
-//            @Context UriInfo info) {
-//        return Response.ok("this page is loaded").build();
-//    }
-//
-//    @HEAD
-//    @ShbRole
-//    @Path("{route:.*}")
-//    @Produces(MediaType.TEXT_HTML)
-//    public Response headRoute(
-//            @PathParam("route") String route,
-//            @Context HttpHeaders httpHeaders,
-//            @Context UriInfo info) {
-//        return Response.ok("this page is loaded").build();
-//    }
+    protected Method registerMethod(
+            String path,
+            String callClassName,
+            String callMethodName,
+            Class<?>... paramList
+    ) throws Exception {
+        Method m = methodMap.get(path);
+        if(m == null) {
+            Class c = Class.forName(callClassName);
+            m = c.getDeclaredMethod(
+                    callMethodName, paramList);
+            methodMap.put(path, m);
+            return m;
+        } else
+            return m;
+    }
+
+    protected ShbSession doAuthorization(
+            HttpHeaders httpHeaders) {
+        return sessionManager
+                .retrieveSession(httpHeaders);
+    }
+
+    protected ShbResponse invokeMethod(
+            Method method,
+            Object... parameters
+    ) throws Exception {
+        return (ShbResponse) method
+                .invoke(null, parameters);
+    }
+
+    protected Response createResponse(
+            ShbResponse response, ShbSession session) {
+        NewCookie sessionCookie = sessionManager
+                .registerCookie(session);
+        Response.ResponseBuilder resBuilder = Response.status(
+                response.getResponseStatus())
+                .entity(response.getEntity());
+        if(sessionCookie != null)
+            resBuilder.cookie(sessionCookie);
+        return resBuilder.build();
+    }
 }

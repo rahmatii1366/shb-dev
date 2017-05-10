@@ -1,25 +1,35 @@
 package com.shb.dev.sample.rest;
 
-import javax.ws.rs.core.Response;
+import com.shb.dev.server.response.ShbResponse;
+import com.shb.dev.server.session.ShbSession;
+import static javax.ws.rs.core.Response.*;
 
 /**
  * @author Mohammad Rahmati, 5/7/2017 1:29 PM
  */
 public class FirstService {
-    public static Response getHelloWorld() {
-        return Response.ok("hello world!").build();
+    public static ShbResponse getHelloWorld(
+            ShbSession session) {
+        return new ShbResponse(Status.OK, "hello world!");
     }
 
-    public static Response getHelloName(String name) {
-        return Response.ok("hello ".concat(name))
-                .build();
+    public static ShbResponse getHelloName(
+            ShbSession session, String name) {
+        return new ShbResponse(Status.OK,
+                "hello ".concat(name));
     }
 
-    public static Response getHelloNameFamily(
+    public static ShbResponse getHelloNameFamily(
+            ShbSession session,
             String name, String family, String message) {
-        return Response.ok(message.concat(" ")
-                .concat(name)
-                .concat(" ").concat(family))
-                .build();
+
+        if(message == null)
+            message = "hi";
+        ShbResponse response =
+                new ShbResponse(Status.OK, message
+                        .concat(" ")
+                        .concat(name)
+                        .concat(" ").concat(family));
+        return response;
     }
 }

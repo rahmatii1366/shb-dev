@@ -9,9 +9,8 @@ import com.shb.dev.server.config.ShbServerConfig.ShbSessionConfig;
 import com.shb.dev.server.role.ShbRoleType;
 import org.apache.log4j.Logger;
 
-import javax.ws.rs.core.Cookie;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.NewCookie;
+import javax.ws.rs.core.*;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import java.util.UUID;
 
 /**
@@ -23,58 +22,60 @@ public class ShbSessionManager {
     public static final String SHB_SESSION_MANAGER =
             "shb-session-manager";
     private ShbCacheProvider cacheProvider = null;
+    protected ShbSessionConfig sessionConfig;
 
     public ShbSessionManager(
-            int cacheSize, int expireSeconds) {
+            ShbSessionConfig sessionConfig) {
+        this.sessionConfig = sessionConfig;
         cacheProvider =
                 ShbCacheProvider.getInstance(
                         key -> createNewSession(),
-                        cacheSize, expireSeconds);
+                        sessionConfig.getSessionCacheSize(),
+                        sessionConfig.getSessionExpireSecond());
     }
 
     public static ShbSessionManager createSessionManager(
             ShbSessionConfig sessionConfig) {
         return new ShbSessionManager(
-                (Integer) sessionConfig
-                        .getSessionCacheSize(),
-                (Integer) sessionConfig
-                        .getSessionExpireSecond());
+                sessionConfig);
     }
 
     public ShbSession retrieveSession(
-            String sessionKey) {
+            HttpHeaders httpHeaders) {
+        ShbSession session = null;
+        String sessionKey = null;
         try {
-            return (ShbSession) cacheProvider
-                    .retrieve(sessionKey);
+            Cookie cookie = httpHeaders.getCookies()
+                    .get(sessionConfig.getSessionName());
+            if(cookie != null) {
+                sessionKey = cookie.getValue();
+                if(sessionKey == null || sessionKey.isEmpty())
+                    sessionKey = createSessionKey();
+                session = (ShbSession) cacheProvider
+                        .retrieve(sessionKey);
+            } else {
+                sessionKey = createSessionKey();
+                session = (ShbSession) cacheProvider
+                        .retrieve(sessionKey);
+            }
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
-        return null;
+        session.setSessionKey(sessionKey);
+        return session;
     }
 
-    public void setSessionCookie(
-            MultivaluedMap httpHeader,
-            Cookie cookie,
-            String sessionName,
-            int maxAge) {
-        if(cookie != null)
-            httpHeader.add("Set-Cookie", new NewCookie(
-                    sessionName,
-                    cookie.getValue(),
-                    "/", null, null,
-                    maxAge, false, true)
-            );
-        else {
-            String sessionKey = createSessionKey();
-            ShbSession shbSession =
-                    retrieveSession(sessionKey);
-            httpHeader.add("Set-Cookie", new NewCookie(
-                    sessionName,
-                    sessionKey,
-                    "/", null, null,
-                    maxAge, false, true)
-            );
+    public NewCookie registerCookie(
+            ShbSession session) {
+        if(session == null) {
+            logger.error("session is null.");
+            return null;
         }
+        return new NewCookie(
+                sessionConfig.getSessionName(),
+                session.getSessionKey(), "/", "", null,
+                sessionConfig.getSessionExpireSecond(),
+                false, false);
     }
 
     private static ShbSession createNewSession()
@@ -86,7 +87,7 @@ public class ShbSessionManager {
         );
     }
 
-    public static String createSessionKey() {
+    private static String createSessionKey() {
         return UUID.randomUUID().toString();
     }
 
