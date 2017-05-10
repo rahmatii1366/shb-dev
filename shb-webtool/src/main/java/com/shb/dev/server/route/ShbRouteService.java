@@ -34,6 +34,7 @@ public class ShbRouteService {
     protected ShbSessionManager sessionManager = null;
     protected Map<String, Method> methodMap =
             new LinkedHashMap<>();
+    protected static ShbAssetResolver shbAssetResolver = null;
     protected static ShbResponse UNAUTHORIZED_RESPONSE =
             new ShbResponse(Status.UNAUTHORIZED, null);
     protected static ShbResponse INTERNAL_SERVER_ERROR_RESPONSE =
@@ -49,10 +50,24 @@ public class ShbRouteService {
                 .getProperty(ShbServerConfig
                         .SHB_SERVER_CONFIG);
 //        File file = new File((String) shbServerConfig.getAssetPath());
-//        assetResolver = ShbAssetResolver.getInstance(file.getPath());
+//        assetResolver = ShbAssetService.getInstance(file.getPath());
         sessionManager = (ShbSessionManager) config
                 .getProperty(ShbSessionManager
                         .SHB_SESSION_MANAGER);
+    }
+
+    public ShbAssetResolver getShbAssetResolver() {
+        if(shbAssetResolver == null) {
+            String assetPath =
+                    shbServerConfig.getAssetPath();
+            if(assetPath == null || assetPath.isEmpty()) {
+                logger.error("asset path is null.");
+                return null;
+            }
+            shbAssetResolver = ShbAssetResolver
+                    .getInstance(assetPath);
+        }
+        return shbAssetResolver;
     }
 
     protected Method registerMethod(

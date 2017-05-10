@@ -82,11 +82,18 @@ public class ShbRouteClassGenerator {
                 if(httpMethod.contains("#"))
                     fixHttpMethod = httpMethod.substring(
                             0, httpMethod.indexOf("#"));
-                appendRouteMethod(
-                        route.concat(httpMethod),
-                        fixHttpMethod,
-                        routerConfig.getRouteConfig(
-                                route, httpMethod), sb);
+                ShbRouteConfig routeConfig = routerConfig
+                        .getRouteConfig(route, httpMethod);
+                if(routeConfig.isAsset())
+                    appendAssetRouteMethod(
+                            route.concat(httpMethod),
+                            fixHttpMethod,
+                            routeConfig, sb);
+                else
+                    appendRouteMethod(
+                            route.concat(httpMethod),
+                            fixHttpMethod,
+                            routeConfig, sb);
             }
         }
 
@@ -131,7 +138,105 @@ public class ShbRouteClassGenerator {
             String methodKey,
             String httpMethod,
             ShbRouteConfig routeConfig,
-            StringBuilder sb) throws Exception {
+            StringBuilder sb)
+            throws Exception {
+        sb.append("@".concat(httpMethod).concat("\n"));
+        String path = new String("");
+        if(routeConfig.getPathParams() != null) {
+            for(String pathParam :
+                    routeConfig.getPathParams()) {
+                path = path.concat("/{")
+                        .concat(pathParam).concat("}");
+            }
+            sb.append("@Path(\"".concat(path).concat("\")\n"));
+        }
+
+        sb.append("@Produces(MediaType.APPLICATION_JSON)\n");
+        String methodName = getRandomName(METHOD_LEN);
+        ShbRoleType methodRoleType = ShbRoleType.ADMIN;
+        try {
+            methodRoleType = ShbRoleType
+                    .getFromName(routeConfig.getRole());
+//            sb.append("@ShbRole(roleType = ShbRoleType."
+//                    .concat(methodRoleType.getName()).concat(")\n"));
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+
+        sb.append("public Response ".concat(methodName)
+                .concat("(@Context HttpHeaders httpHeaders,"));
+        boolean clr = true;
+        List<String> params = new ArrayList<>();
+        if(routeConfig.getPathParams() != null) {
+            for(String pathParam :
+                    routeConfig.getPathParams()) {
+                params.add(pathParam);
+                sb.append("@PathParam(\"".concat(pathParam)
+                        .concat("\") String ")
+                        .concat(pathParam).concat(","));
+                clr = true;
+            }
+        }
+        if(routeConfig.getQueryParams() != null) {
+            for(String queryParam :
+                    routeConfig.getQueryParams()) {
+                params.add(queryParam);
+                sb.append("@QueryParam(\"".concat(queryParam)
+                        .concat("\") String ")
+                        .concat(queryParam).concat(","));
+                clr = true;
+            }
+        }
+        if (clr)
+            sb.deleteCharAt(sb.length() - 1);
+        sb.append(") throws Exception {\n");
+        String resource = routeConfig.getHandler();
+        String callMethodName = resource.substring(
+                resource.lastIndexOf(".") + 1);
+        String callClassName = resource.substring(
+                0, resource.lastIndexOf("."));
+
+        String paramListStr = "";
+        Class<?>[] paramList = new Class<?>[params.size() + 1];
+        int i = 0;
+        paramList[i++] = ShbSession.class;
+        for(String p : params) {
+            paramListStr = paramListStr.concat("String.class,");
+            paramList[i++] = String.class;
+        }
+        sb.append("ShbRoleType methodRoleType=ShbRoleType."
+                .concat(methodRoleType.getName())
+                .concat(";\n"));
+        sb.append("ShbResponse shbResponse = UNAUTHORIZED_RESPONSE;\n");
+        sb.append("ShbSession session = doAuthorization(httpHeaders);\n");
+        sb.append("if(methodRoleType.isValid(session.getRoleType())) {\n"
+                .concat("try {\n")
+                .concat("Method m = registerMethod(\"")
+                .concat(methodKey)
+                .concat("\",\"")
+                .concat(callClassName).concat("\",\"")
+                .concat(callMethodName).concat("\",")
+                .concat("ShbSession.class,")
+                .concat(paramListStr));
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(");\n");
+
+        sb.append("shbResponse = invokeMethod(m, session,");
+        for (String p : params)
+            sb.append(p.concat(","));
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(");\n} catch (Exception e) {\n");
+        sb.append("shbResponse = INTERNAL_SERVER_ERROR_RESPONSE;\n} \n}\n");
+        sb.append("return createResponse(shbResponse, session);\n");
+        sb.append("}\n");
+    }
+
+    static void appendAssetRouteMethod(
+            String methodKey,
+            String httpMethod,
+            ShbRouteConfig routeConfig,
+            StringBuilder sb)
+            throws Exception {
         sb.append("@".concat(httpMethod).concat("\n"));
         String path = new String("");
         if(routeConfig.getPathParams() != null) {

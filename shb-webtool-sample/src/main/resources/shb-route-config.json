@@ -8,6 +8,15 @@
       "asset": "true"
     }
   },
+  "/assets": {
+    "GET#file": {
+      "handler": "com.shb.dev.sample.rest.AssetService.getAsset",
+      "path-params": ["file"],
+      "query-params": [],
+      "role": "GUEST",
+      "asset": "true"
+    }
+  },
   "/hello-world": {
     "GET#name": {
       "handler": "com.shb.dev.sample.rest.FirstService.getHelloName",
