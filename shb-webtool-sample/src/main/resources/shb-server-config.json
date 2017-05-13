@@ -5,7 +5,7 @@
   "http-base-route": "",
   "rest-filters": [
   ],
-  "asset-path": "D:/git-project/shb-dev/shb-client-sample",
+  "asset-path": "D:/git-project/shb-dev/shb-client-sample/asset",
   "session":{
     "session-name": "SHADBARG_SESSION",
     "session-cache-size": "500",

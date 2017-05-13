@@ -10,15 +10,29 @@ import javax.ws.rs.core.Response;
 /**
  * @author Mohammad Rahmati, 5/10/2017 8:46 PM
  */
-public class ShbAssetService {
+class ShbAssetService {
+    public static ShbResponse getAsset(
+            ShbSession session,
+            ShbAssetResolver assetResolver) {
+        ShbAsset asset = assetResolver
+                .resolve("index.html");
+        return new ShbResponse(
+                Response.Status.OK,
+                asset.getBytes(),
+                asset.getMediaType());
+    }
+
     public static ShbResponse getAsset(
             ShbSession session,
             ShbAssetResolver assetResolver,
-            String assetPath) {
+            String path) {
+        if(path == null || path.isEmpty())
+            return getAsset(session, assetResolver);
         ShbAsset asset = assetResolver
-                .resolve(assetPath);
+                .resolve(path);
         return new ShbResponse(
                 Response.Status.OK,
-                asset.getBytes());
+                asset.getBytes(),
+                asset.getMediaType());
     }
 }

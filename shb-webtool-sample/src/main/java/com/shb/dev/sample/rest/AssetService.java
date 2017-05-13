@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
  * @author Mohammad Rahmati, 5/10/2017 8:16 PM
  */
 public class AssetService {
-    public static ShbResponse getRoot(
+    public static ShbResponse getAsset(
             ShbSession session,
             ShbAssetResolver assetResolver) {
         ShbAsset asset =

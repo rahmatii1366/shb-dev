@@ -10,7 +10,7 @@ import { OfferService } from '../../service/offer.service.js';
 
 @Component({
     selector: 'offer-vitrin',
-    templateUrl: './offer-vitrin.component.html'
+    templateUrl: 'asset/app/guest/component/offer-vitrin/offer-vitrin.component.html'
     // styleUrls: ['./offers.component.css'],
 })
 export class OfferVitrinComponent implements OnInit {

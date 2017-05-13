@@ -34,6 +34,8 @@ public class ShbRouteService {
     protected ShbSessionManager sessionManager = null;
     protected Map<String, Method> methodMap =
             new LinkedHashMap<>();
+    protected Map<String, ShbAssetResolver> assetMap =
+            new LinkedHashMap<>();
     protected static ShbAssetResolver shbAssetResolver = null;
     protected static ShbResponse UNAUTHORIZED_RESPONSE =
             new ShbResponse(Status.UNAUTHORIZED, null);
@@ -54,37 +56,40 @@ public class ShbRouteService {
         sessionManager = (ShbSessionManager) config
                 .getProperty(ShbSessionManager
                         .SHB_SESSION_MANAGER);
+//        ShbAssetResolver assetResolver = getShbAssetResolver();
+//        ShbAsset resolve = assetResolver.resolve("main.ts.map");
+//        String mediaType = resolve.getMediaType();
+//        System.out.println(mediaType);
     }
 
-    public ShbAssetResolver getShbAssetResolver() {
-        if(shbAssetResolver == null) {
-            String assetPath =
-                    shbServerConfig.getAssetPath();
-            if(assetPath == null || assetPath.isEmpty()) {
-                logger.error("asset path is null.");
-                return null;
-            }
-            shbAssetResolver = ShbAssetResolver
+    protected ShbAssetResolver registerAssetResolver(
+            String urlPath, String assetPath) {
+        ShbAssetResolver assetResolver = assetMap
+                .get(urlPath);
+        if(assetResolver == null) {
+            assetResolver = ShbAssetResolver
                     .getInstance(assetPath);
+            assetMap.put(urlPath, assetResolver);
+            return assetResolver;
         }
-        return shbAssetResolver;
+        return assetResolver;
     }
 
     protected Method registerMethod(
-            String path,
+            String urlPath,
             String callClassName,
             String callMethodName,
             Class<?>... paramList
     ) throws Exception {
-        Method m = methodMap.get(path);
-        if(m == null) {
+        Method method = methodMap.get(urlPath);
+        if(method == null) {
             Class c = Class.forName(callClassName);
-            m = c.getDeclaredMethod(
+            method = c.getDeclaredMethod(
                     callMethodName, paramList);
-            methodMap.put(path, m);
-            return m;
-        } else
-            return m;
+            methodMap.put(urlPath, method);
+            return method;
+        }
+        return method;
     }
 
     protected ShbSession doAuthorization(
@@ -107,7 +112,8 @@ public class ShbRouteService {
                 .registerCookie(session);
         Response.ResponseBuilder resBuilder = Response.status(
                 response.getResponseStatus())
-                .entity(response.getEntity());
+                .entity(response.getEntity())
+                .header("Content-Type", response.getMediaType());
         if(sessionCookie != null)
             resBuilder.cookie(sessionCookie);
         return resBuilder.build();

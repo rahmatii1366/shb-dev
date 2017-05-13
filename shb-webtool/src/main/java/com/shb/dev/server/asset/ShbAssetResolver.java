@@ -2,6 +2,8 @@ package com.shb.dev.server.asset;
 
 import org.apache.log4j.Logger;
 
+import javax.activation.MimetypesFileTypeMap;
+import javax.ws.rs.core.MediaType;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,22 +26,22 @@ public class ShbAssetResolver implements Runnable {
             ShbAssetResolver.class);
     private Map<String, ShbAsset> assetsMap =
             new LinkedHashMap<>();
-    private Path publicPath;
+    private Path rootPath;
     private static ReentrantLock lock = new ReentrantLock();
     private static ShbAssetResolver shbAssetResolver = null;
     private WatchService watchService;
     private WatchKey watchKey;
 
-    private ShbAssetResolver(Path publicPath)
+    private ShbAssetResolver(Path rootPath)
             throws IOException, InterruptedException {
-        this.publicPath = publicPath;
+        this.rootPath = rootPath;
 
-        watchService = publicPath
+        watchService = rootPath
                 .getFileSystem().newWatchService();
-        registerRecursive(this.publicPath, watchService);
+        registerRecursive(this.rootPath, watchService);
 
-//        this.watchKey = this.publicPath.register(
-//                publicPath.getFileSystem().newWatchService(),
+//        this.watchKey = this.rootPath.register(
+//                rootPath.getFileSystem().newWatchService(),
 //                ENTRY_CREATE,
 //                ENTRY_MODIFY,
 //                ENTRY_DELETE
@@ -130,32 +132,38 @@ public class ShbAssetResolver implements Runnable {
         });
     }
 
-    public ShbAsset reload(String path) {
+    private ShbAsset reload(String path) {
         ShbAsset shbAsset = null;
         FileInputStream fileInputStream = null;
-        File f = null;
+        File file = null;
         try {
-            f = new File(publicPath.toString(), path);
-            fileInputStream = new FileInputStream(f);
+            file = new File(rootPath.toString(), path);
+            fileInputStream = new FileInputStream(file);
             int available = fileInputStream.available();
+            String mediaType = Files
+                    .probeContentType(file.toPath());
+            if(mediaType == null || mediaType.isEmpty())
+                mediaType = new MimetypesFileTypeMap()
+                    .getContentType(file);
             byte[] bytes = new byte[available];
             int read = fileInputStream.read(bytes, 0, available);
             if(read == available) {
-                shbAsset = new ShbAsset(
-                        bytes, path, publicPath.toString());
+                shbAsset = new ShbAsset(bytes,
+                        rootPath.toString(),
+                        path, mediaType);
                 assetsMap.put(shbAsset.getPath().toString(), shbAsset);
             }
             logger.info("load asset");
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            return catchException(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            return catchException(e);
         } finally {
             if(fileInputStream != null)
                 try {
                     fileInputStream.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    return catchException(e);
                 }
         }
         return shbAsset;
@@ -172,5 +180,9 @@ public class ShbAssetResolver implements Runnable {
         return shbAsset;
     }
 
-
+    private ShbAsset catchException(Exception ex) {
+        logger.error(ex);
+        return new ShbAsset(null, rootPath.toString(),
+                "not-found.txt", MediaType.TEXT_PLAIN);
+    }
 }

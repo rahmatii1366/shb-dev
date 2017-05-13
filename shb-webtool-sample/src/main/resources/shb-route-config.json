@@ -1,20 +1,45 @@
 {
   "/": {
     "GET": {
-      "handler": "com.shb.dev.sample.rest.AssetService.getRoot",
+      "handler": "",
       "path-params": [],
       "query-params": [],
       "role": "GUEST",
-      "asset": "true"
-    }
-  },
-  "/assets": {
+      "asset-path": "D:/git-project/shb-dev/shb-client-sample/asset"
+    },
     "GET#file": {
-      "handler": "com.shb.dev.sample.rest.AssetService.getAsset",
-      "path-params": ["file"],
+      "handler": "",
+      "path-params": ["file:.*"],
       "query-params": [],
       "role": "GUEST",
-      "asset": "true"
+      "asset-path": "D:/git-project/shb-dev/shb-client-sample/asset"
+    }
+  },
+  "/asset": {
+    "GET#file": {
+      "handler": "",
+      "path-params": ["file:.*"],
+      "query-params": [],
+      "role": "GUEST",
+      "asset-path": "D:/git-project/shb-dev/shb-client-sample/asset"
+    }
+  },
+  "/node_modules": {
+    "GET#file": {
+      "handler": "",
+      "path-params": ["file:.*"],
+      "query-params": [],
+      "role": "GUEST",
+      "asset-path": "D:/git-project/shb-dev/shb-client-sample/node_modules"
+    }
+  },
+  "/images": {
+    "GET#file": {
+      "handler": "",
+      "path-params": ["file:.*"],
+      "query-params": [],
+      "role": "GUEST",
+      "asset-path": "D:/git-project/shb-dev/shb-client-sample/asset/images"
     }
   },
   "/hello-world": {
@@ -34,6 +59,13 @@
     "GET#name": {
       "handler": "com.shb.dev.sample.rest.FirstService.getHelloName",
       "path-params": ["name"],
+      "query-params": []
+    }
+  },
+  "/offer/all": {
+    "GET": {
+      "handler": "com.shb.dev.sample.rest.OfferRest.allOffer",
+      "path-params": [],
       "query-params": []
     }
   }

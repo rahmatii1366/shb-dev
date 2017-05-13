@@ -3,6 +3,7 @@ package com.shb.dev.server.config;
 import org.apache.log4j.Logger;
 
 import javax.ws.rs.core.UriBuilder;
+import java.io.File;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -28,24 +29,24 @@ public class ShbRouterConfig
 
     public Set<String> getHttpMethods(
             String route) {
-        if(route == null || route.isEmpty())
+        if (route == null || route.isEmpty())
             route = new String("/");
-        if(getShbConfig(route) == null)
+        if (getShbConfig(route) == null)
             return null;
         Map<String, Object> configMap = getMap(route);
-        if(configMap != null)
+        if (configMap != null)
             return configMap.keySet();
         return null;
     }
 
     public ShbRouteConfig getRouteConfig(
             String route, String method) {
-        if(route == null || route.isEmpty())
+        if (route == null || route.isEmpty())
             route = new String("/");
-        if(getShbConfig(route) == null)
+        if (getShbConfig(route) == null)
             return null;
         Map<String, Object> configMap = getMap(route);
-        if(configMap.containsKey(method)) {
+        if (configMap.containsKey(method)) {
             ShbRouteConfig routeConfig =
                     new ShbRouteConfig();
             routeConfig.reconfigure((Map<String, Object>)
@@ -69,8 +70,8 @@ public class ShbRouterConfig
                 = "query-params";
         public static final String ROLE_CONFIG
                 = "role";
-        public static final String ASSET_CONFIG
-                = "asset";
+        public static final String ASSET_PATH_CONFIG
+                = "asset-path";
 
         public String getHandler() {
             return getString(HANDLER_CONFIG);
@@ -88,13 +89,18 @@ public class ShbRouterConfig
             return getString(ROLE_CONFIG);
         }
 
+        public String getAssetPath() {
+            return getString(ASSET_PATH_CONFIG);
+        }
+
         public boolean isAsset() {
-            boolean asset = false;
-            if(getString(ASSET_CONFIG) != null &&
-                    getString(ASSET_CONFIG)
-                            .equalsIgnoreCase("TRUE"))
-                asset = true;
-            return asset;
+            if (getString(ASSET_PATH_CONFIG) != null) {
+                File file = new File(
+                        getString(ASSET_PATH_CONFIG));
+                if (file.exists() && file.isDirectory())
+                    return true;
+            }
+            return false;
         }
     }
 }
