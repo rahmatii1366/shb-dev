@@ -16,6 +16,26 @@
         <module>shb-util</module>
     </modules>
 
+    <properties>
+        <nexus.ip>192.168.50.144</nexus.ip>
+        <nexus.port>8081</nexus.port>
+    </properties>
+
+    <distributionManagement>
+        <repository>
+            <!--<uniqueVersion>false</uniqueVersion>-->
+            <id>my-nexus</id>
+            <name>my nexus</name>
+            <url>http://${nexus.ip}:${nexus.port}/nexus/content/repositories/releases</url>
+            <layout>default</layout>
+        </repository>
+        <snapshotRepository>
+            <id>my-nexus</id>
+            <name>my nexus</name>
+            <url>http://${nexus.ip}:${nexus.port}/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
